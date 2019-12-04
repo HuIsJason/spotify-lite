@@ -1,11 +1,19 @@
 package com.csc301.songmicroservice;
 
-import org.bson.types.ObjectId;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
+
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
+
+//import ca.utoronto.utm.mcs.NotFoundException;
 
 @Repository
 public class SongDalImpl implements SongDal {
@@ -20,30 +28,85 @@ public class SongDalImpl implements SongDal {
 	@Override
 	public DbQueryStatus addSong(Song songToAdd) {
 		// TODO Auto-generated method stub
-		return null;
+		DbQueryStatus response = new DbQueryStatus("OK", DbQueryExecResult.QUERY_OK);
+
+		Song insertedSong = db.insert(songToAdd);
+
+		if (insertedSong == null) {
+			response.setMessage("NOT FOUND");
+			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+		} else {
+			response.setData(insertedSong.getJsonRepresentation());
+		}
+
+		return response;
 	}
 
 	@Override
 	public DbQueryStatus findSongById(String songId) {
 		// TODO Auto-generated method stub
-		return null;
+		DbQueryStatus response = new DbQueryStatus("OK", DbQueryExecResult.QUERY_OK);
+
+		Song queriedSong = db.findById(songId, Song.class);
+
+		if (queriedSong == null) {
+			response.setMessage("NOT FOUND");
+			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+		} else {
+			response.setData(queriedSong.getJsonRepresentation());
+		}
+
+		return response;
 	}
 
 	@Override
 	public DbQueryStatus getSongTitleById(String songId) {
 		// TODO Auto-generated method stub
-		return null;
+		DbQueryStatus response = new DbQueryStatus("OK", DbQueryExecResult.QUERY_OK);
+
+		Song queriedSong = db.findById(songId, Song.class);
+
+		if (queriedSong == null) {
+			response.setMessage("NOT FOUND");
+			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+		} else {
+			response.setData(queriedSong.getSongName());
+		}
+
+		return response;
 	}
 
 	@Override
 	public DbQueryStatus deleteSongById(String songId) {
 		// TODO Auto-generated method stub
-		return null;
+		DbQueryStatus response = new DbQueryStatus("OK", DbQueryExecResult.QUERY_OK);
+
+		DeleteResult deleteResult = db.remove(songId);
+
+		if (!deleteResult.wasAcknowledged()) {
+			response.setMessage("NOT FOUND");
+			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+		}
+
+		return response;
 	}
 
 	@Override
 	public DbQueryStatus updateSongFavouritesCount(String songId, boolean shouldDecrement) {
 		// TODO Auto-generated method stub
-		return null;
+		DbQueryStatus response = new DbQueryStatus("OK", DbQueryExecResult.QUERY_OK);
+		int updateAmount = (shouldDecrement) ? -1 : 1;
+
+		Query searchQuery = new Query(Criteria.where("_id").is(songId));
+		Song preUpdatedSong= db.findOne(searchQuery, Song.class);
+		long newFavouriteAmount = preUpdatedSong.getSongAmountFavourites() + updateAmount;
+		UpdateResult updateResult = db.updateFirst(searchQuery, Update.update("songAmountFavourites", newFavouriteAmount), Song.class);
+		
+		if (!updateResult.wasAcknowledged()) {
+			response.setMessage("NOT FOUND");
+			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+		}
+
+		return response;
 	}
 }
