@@ -65,7 +65,7 @@ public class SongController {
 		response.put("message", dbQueryStatus.getMessage());
 		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
 
-		return null;
+		return response;
 	}
 
 	
@@ -81,7 +81,7 @@ public class SongController {
 		response.put("message", dbQueryStatus.getMessage());
 		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
 
-		return null;
+		return response;
 	}
 
 	
@@ -98,7 +98,7 @@ public class SongController {
 		response.put("message", dbQueryStatus.getMessage());
 		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
 
-		return null;
+		return response;
 	}
 
 	
@@ -109,15 +109,13 @@ public class SongController {
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("data", String.format("PUT %s", Utils.getUrl(request)));
 
-		boolean shouldDecrementBoolean = false;
-		if (shouldDecrement.equals("true")) {
-			shouldDecrementBoolean = true;
-		}
+		boolean shouldDecrementBoolean = (shouldDecrement.equals("true")) ? true : false;
+
 		DbQueryStatus dbQueryStatus = songDal.updateSongFavouritesCount(songId, shouldDecrementBoolean);
 
 		response.put("message", dbQueryStatus.getMessage());
 		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
 
-		return null;
+		return response;
 	}
 }

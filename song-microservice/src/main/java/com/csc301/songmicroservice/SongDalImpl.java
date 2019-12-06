@@ -99,7 +99,7 @@ public class SongDalImpl implements SongDal {
 		} else {
 			DeleteResult deleteResult = db.remove(songId);
 	
-			if (!deleteResult.wasAcknowledged()) {
+			if (deleteResult.getDeletedCount() == 0l) {
 				response.setMessage("NOT FOUND");
 				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
 			}
@@ -120,12 +120,18 @@ public class SongDalImpl implements SongDal {
 	
 			Query searchQuery = new Query(Criteria.where("_id").is(songId));
 			Song preUpdatedSong= db.findOne(searchQuery, Song.class);
-			long newFavouriteAmount = preUpdatedSong.getSongAmountFavourites() + updateAmount;
-			UpdateResult updateResult = db.updateFirst(searchQuery, Update.update("songAmountFavourites", newFavouriteAmount), Song.class);
 			
-			if (!updateResult.wasAcknowledged()) {
+			if (preUpdatedSong == null) {
 				response.setMessage("NOT FOUND");
 				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+			} else {
+				long newFavouriteAmount = preUpdatedSong.getSongAmountFavourites() + updateAmount;
+				UpdateResult updateResult = db.updateFirst(searchQuery, Update.update("songAmountFavourites", newFavouriteAmount), Song.class);
+				
+				if (updateResult.getModifiedCount() == 0l) {
+					response.setMessage("NOT FOUND");
+					response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+				}
 			}
 		}
 		return response;
