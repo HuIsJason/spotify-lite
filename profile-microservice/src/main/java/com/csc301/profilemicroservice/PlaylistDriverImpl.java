@@ -52,7 +52,6 @@ public class PlaylistDriverImpl implements PlaylistDriver {
 				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
 			}
 		}
-
 		return response;
 	}
 
@@ -99,7 +98,6 @@ public class PlaylistDriverImpl implements PlaylistDriver {
 				}
 			}
 		}
-
 		return response;
 	}
 
@@ -124,7 +122,6 @@ public class PlaylistDriverImpl implements PlaylistDriver {
 				session.close();
 			}
 		}
-
 		return response;
 	}
 }

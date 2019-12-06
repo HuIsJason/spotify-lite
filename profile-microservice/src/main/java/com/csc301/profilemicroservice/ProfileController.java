@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.csc301.profilemicroservice.Utils;
+//import com.csc301.songmicroservice.DbQueryStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import okhttp3.Call;
@@ -46,15 +47,20 @@ public class ProfileController {
 		this.playlistDriver = playlistDriver;
 	}
 
-	@RequestMapping(value = "/profile", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> addSong(@RequestParam Map<String, String> params,
-			HttpServletRequest request) {
-
-		Map<String, Object> response = new HashMap<String, Object>();
-		response.put("path", String.format("POST %s", Utils.getUrl(request)));
-
-		return null;
-	}
+//	@RequestMapping(value = "/profile", method = RequestMethod.POST)
+//	public @ResponseBody Map<String, Object> addSong(@RequestParam Map<String, String> params,
+//			HttpServletRequest request) {
+//
+//		Map<String, Object> response = new HashMap<String, Object>();
+//		response.put("path", String.format("POST %s", Utils.getUrl(request)));
+//
+//		DbQueryStatus dbQueryStatus = songDal.findSongById(songId);
+//
+//		response.put("message", dbQueryStatus.getMessage());
+//		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
+//
+//		return response;
+//	}
 
 	@RequestMapping(value = "/followFriend/{userName}/{friendUserName}", method = RequestMethod.PUT)
 	public @ResponseBody Map<String, Object> followFriend(@PathVariable("userName") String userName,
@@ -62,8 +68,13 @@ public class ProfileController {
 
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("path", String.format("PUT %s", Utils.getUrl(request)));
-		
-		return null;
+
+		DbQueryStatus dbQueryStatus = profileDriver.followFriend(userName, friendUserName);
+
+		response.put("message", dbQueryStatus.getMessage());
+		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
+
+		return response;
 	}
 
 	@RequestMapping(value = "/getAllFriendFavouriteSongTitles/{userName}", method = RequestMethod.GET)
@@ -73,7 +84,12 @@ public class ProfileController {
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("path", String.format("PUT %s", Utils.getUrl(request)));
 
-		return null;
+		DbQueryStatus dbQueryStatus = profileDriver.getAllSongFriendsLike(userName);
+
+		response.put("message", dbQueryStatus.getMessage());
+		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
+
+		return response;
 	}
 
 
@@ -84,7 +100,12 @@ public class ProfileController {
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("path", String.format("PUT %s", Utils.getUrl(request)));
 
-		return null;
+		DbQueryStatus dbQueryStatus = profileDriver.unfollowFriend(userName, friendUserName);
+
+		response.put("message", dbQueryStatus.getMessage());
+		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
+
+		return response;
 	}
 
 	@RequestMapping(value = "/likeSong/{userName}/{songId}", method = RequestMethod.PUT)
@@ -94,7 +115,12 @@ public class ProfileController {
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("path", String.format("PUT %s", Utils.getUrl(request)));
 
-		return null;
+		DbQueryStatus dbQueryStatus = playlistDriver.likeSong(userName, songId);
+
+		response.put("message", dbQueryStatus.getMessage());
+		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
+
+		return response;
 	}
 
 	@RequestMapping(value = "/unlikeSong/{userName}/{songId}", method = RequestMethod.PUT)
@@ -104,7 +130,12 @@ public class ProfileController {
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("path", String.format("PUT %s", Utils.getUrl(request)));
 
-		return null;
+		DbQueryStatus dbQueryStatus = playlistDriver.likeSong(userName, songId);
+
+		response.put("message", dbQueryStatus.getMessage());
+		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
+
+		return response;
 	}
 
 	@RequestMapping(value = "/deleteAllSongsFromDb/{songId}", method = RequestMethod.PUT)
@@ -113,7 +144,12 @@ public class ProfileController {
 
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("path", String.format("PUT %s", Utils.getUrl(request)));
-		
-		return null;
+
+		DbQueryStatus dbQueryStatus = playlistDriver.deleteSongFromDb(songId);
+
+		response.put("message", dbQueryStatus.getMessage());
+		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
+
+		return response;
 	}
 }

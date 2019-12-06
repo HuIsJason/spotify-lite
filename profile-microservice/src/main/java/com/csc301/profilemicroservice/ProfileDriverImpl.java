@@ -90,7 +90,6 @@ public class ProfileDriverImpl implements ProfileDriver {
 				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
 			}
 		}
-
 		return response;
 	}
 
@@ -131,7 +130,6 @@ public class ProfileDriverImpl implements ProfileDriver {
 				}
 			}
 		}
-
 		return response;
 	}
 
@@ -147,7 +145,6 @@ public class ProfileDriverImpl implements ProfileDriver {
 		} else {
 			try (Session session = ProfileMicroserviceApplication.driver.session()) {
 				try (Transaction trans = session.beginTransaction()) {
-					// get 
 					queryStr = "MATCH (user:profile {userName:{userName}})-[:follows]->(:profile)-[:created]->(:playlist)-[:includes]->(friendSong:song)" +
 							   "RETURN friendSong";
 					queryResult = trans.run(queryStr, Values.parameters("userName", userName));
@@ -168,7 +165,6 @@ public class ProfileDriverImpl implements ProfileDriver {
 				response.setData(queryItemList);
 			}
 		}
-
 		return response;
 	}
 }
