@@ -30,15 +30,19 @@ public class SongDalImpl implements SongDal {
 		// TODO Auto-generated method stub
 		DbQueryStatus response = new DbQueryStatus("OK", DbQueryExecResult.QUERY_OK);
 
-		Song insertedSong = db.insert(songToAdd);
-
-		if (insertedSong == null) {
-			response.setMessage("NOT FOUND");
-			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+		if (songToAdd == null) {
+			response.setMessage("INVALID INPUT");
+			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_GENERIC);
 		} else {
-			response.setData(insertedSong.getJsonRepresentation());
+			Song insertedSong = db.insert(songToAdd);
+	
+			if (insertedSong == null) {
+				response.setMessage("NOT FOUND");
+				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+			} else {
+				response.setData(insertedSong.getJsonRepresentation());
+			}
 		}
-
 		return response;
 	}
 
@@ -47,15 +51,19 @@ public class SongDalImpl implements SongDal {
 		// TODO Auto-generated method stub
 		DbQueryStatus response = new DbQueryStatus("OK", DbQueryExecResult.QUERY_OK);
 
-		Song queriedSong = db.findById(songId, Song.class);
-
-		if (queriedSong == null) {
-			response.setMessage("NOT FOUND");
-			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+		if (songId == null) {
+			response.setMessage("INVALID INPUT");
+			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_GENERIC);
 		} else {
-			response.setData(queriedSong.getJsonRepresentation());
+			Song queriedSong = db.findById(songId, Song.class);
+	
+			if (queriedSong == null) {
+				response.setMessage("NOT FOUND");
+				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+			} else {
+				response.setData(queriedSong.getJsonRepresentation());
+			}
 		}
-
 		return response;
 	}
 
@@ -64,15 +72,19 @@ public class SongDalImpl implements SongDal {
 		// TODO Auto-generated method stub
 		DbQueryStatus response = new DbQueryStatus("OK", DbQueryExecResult.QUERY_OK);
 
-		Song queriedSong = db.findById(songId, Song.class);
-
-		if (queriedSong == null) {
-			response.setMessage("NOT FOUND");
-			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+		if (songId == null) {
+			response.setMessage("INVALID INPUT");
+			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_GENERIC);
 		} else {
-			response.setData(queriedSong.getSongName());
+			Song queriedSong = db.findById(songId, Song.class);
+	
+			if (queriedSong == null) {
+				response.setMessage("NOT FOUND");
+				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+			} else {
+				response.setData(queriedSong.getSongName());
+			}
 		}
-
 		return response;
 	}
 
@@ -81,13 +93,17 @@ public class SongDalImpl implements SongDal {
 		// TODO Auto-generated method stub
 		DbQueryStatus response = new DbQueryStatus("OK", DbQueryExecResult.QUERY_OK);
 
-		DeleteResult deleteResult = db.remove(songId);
-
-		if (!deleteResult.wasAcknowledged()) {
-			response.setMessage("NOT FOUND");
-			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+		if (songId == null) {
+			response.setMessage("INVALID INPUT");
+			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_GENERIC);
+		} else {
+			DeleteResult deleteResult = db.remove(songId);
+	
+			if (!deleteResult.wasAcknowledged()) {
+				response.setMessage("NOT FOUND");
+				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+			}
 		}
-
 		return response;
 	}
 
@@ -95,18 +111,23 @@ public class SongDalImpl implements SongDal {
 	public DbQueryStatus updateSongFavouritesCount(String songId, boolean shouldDecrement) {
 		// TODO Auto-generated method stub
 		DbQueryStatus response = new DbQueryStatus("OK", DbQueryExecResult.QUERY_OK);
-		int updateAmount = (shouldDecrement) ? -1 : 1;
 
-		Query searchQuery = new Query(Criteria.where("_id").is(songId));
-		Song preUpdatedSong= db.findOne(searchQuery, Song.class);
-		long newFavouriteAmount = preUpdatedSong.getSongAmountFavourites() + updateAmount;
-		UpdateResult updateResult = db.updateFirst(searchQuery, Update.update("songAmountFavourites", newFavouriteAmount), Song.class);
-		
-		if (!updateResult.wasAcknowledged()) {
-			response.setMessage("NOT FOUND");
-			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+		if (songId == null) {
+			response.setMessage("INVALID INPUT");
+			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_GENERIC);
+		} else {
+			int updateAmount = (shouldDecrement) ? -1 : 1;
+	
+			Query searchQuery = new Query(Criteria.where("_id").is(songId));
+			Song preUpdatedSong= db.findOne(searchQuery, Song.class);
+			long newFavouriteAmount = preUpdatedSong.getSongAmountFavourites() + updateAmount;
+			UpdateResult updateResult = db.updateFirst(searchQuery, Update.update("songAmountFavourites", newFavouriteAmount), Song.class);
+			
+			if (!updateResult.wasAcknowledged()) {
+				response.setMessage("NOT FOUND");
+				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
+			}
 		}
-
 		return response;
 	}
 }
