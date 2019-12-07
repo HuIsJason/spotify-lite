@@ -3,6 +3,7 @@ package com.csc301.songmicroservice;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -35,7 +36,7 @@ public class SongDalImpl implements SongDal {
 			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_GENERIC);
 		} else {
 			Song insertedSong = db.insert(songToAdd);
-	
+
 			if (insertedSong == null) {
 				response.setMessage("NOT FOUND");
 				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
@@ -56,7 +57,7 @@ public class SongDalImpl implements SongDal {
 			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_GENERIC);
 		} else {
 			Song queriedSong = db.findById(songId, Song.class);
-	
+
 			if (queriedSong == null) {
 				response.setMessage("NOT FOUND");
 				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
@@ -77,7 +78,7 @@ public class SongDalImpl implements SongDal {
 			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_GENERIC);
 		} else {
 			Song queriedSong = db.findById(songId, Song.class);
-	
+
 			if (queriedSong == null) {
 				response.setMessage("NOT FOUND");
 				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
@@ -97,9 +98,10 @@ public class SongDalImpl implements SongDal {
 			response.setMessage("INVALID INPUT");
 			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_GENERIC);
 		} else {
-			DeleteResult deleteResult = db.remove(songId);
-	
-			if (deleteResult.getDeletedCount() == 0l) {
+			Query searchQuery = new Query(Criteria.where("_id").is(songId));
+			Song deletedSong= db.findAndRemove(searchQuery, Song.class);
+
+			if (deletedSong == null) {
 				response.setMessage("NOT FOUND");
 				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
 			}
@@ -117,17 +119,17 @@ public class SongDalImpl implements SongDal {
 			response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_GENERIC);
 		} else {
 			int updateAmount = (shouldDecrement) ? -1 : 1;
-	
+
 			Query searchQuery = new Query(Criteria.where("_id").is(songId));
 			Song preUpdatedSong= db.findOne(searchQuery, Song.class);
-			
+
 			if (preUpdatedSong == null) {
 				response.setMessage("NOT FOUND");
 				response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
 			} else {
 				long newFavouriteAmount = preUpdatedSong.getSongAmountFavourites() + updateAmount;
 				UpdateResult updateResult = db.updateFirst(searchQuery, Update.update("songAmountFavourites", newFavouriteAmount), Song.class);
-				
+
 				if (updateResult.getModifiedCount() == 0l) {
 					response.setMessage("NOT FOUND");
 					response.setdbQueryExecResult(DbQueryExecResult.QUERY_ERROR_NOT_FOUND);
