@@ -14,6 +14,7 @@ import com.csc301.profilemicroservice.Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import okhttp3.Call;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -47,20 +48,20 @@ public class ProfileController {
 		this.playlistDriver = playlistDriver;
 	}
 
-//	@RequestMapping(value = "/profile", method = RequestMethod.POST)
-//	public @ResponseBody Map<String, Object> addSong(@RequestParam Map<String, String> params,
-//			HttpServletRequest request) {
-//
-//		Map<String, Object> response = new HashMap<String, Object>();
-//		response.put("path", String.format("POST %s", Utils.getUrl(request)));
-//
-//		DbQueryStatus dbQueryStatus = songDal.findSongById(songId);
-//
-//		response.put("message", dbQueryStatus.getMessage());
-//		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
-//
-//		return response;
-//	}
+	@RequestMapping(value = "/profile", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> addProfile(@RequestParam Map<String, String> params,
+			HttpServletRequest request) {
+
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("path", String.format("POST %s", Utils.getUrl(request)));
+
+		DbQueryStatus dbQueryStatus = profileDriver.createUserProfile(params.get(KEY_USER_NAME), params.get(KEY_USER_FULLNAME), params.get(KEY_USER_PASSWORD));
+
+		response.put("message", dbQueryStatus.getMessage());
+		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
+
+		return response;
+	}
 
 	@RequestMapping(value = "/followFriend/{userName}/{friendUserName}", method = RequestMethod.PUT)
 	public @ResponseBody Map<String, Object> followFriend(@PathVariable("userName") String userName,
@@ -130,7 +131,7 @@ public class ProfileController {
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("path", String.format("PUT %s", Utils.getUrl(request)));
 
-		DbQueryStatus dbQueryStatus = playlistDriver.likeSong(userName, songId);
+		DbQueryStatus dbQueryStatus = playlistDriver.unlikeSong(userName, songId);
 
 		response.put("message", dbQueryStatus.getMessage());
 		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
