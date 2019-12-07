@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.Call;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -75,8 +76,18 @@ public class SongController {
 
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("path", String.format("DELETE %s", Utils.getUrl(request)));
-
+		
 		DbQueryStatus dbQueryStatus = songDal.deleteSongById(songId);
+
+		Request toSend = new Request.Builder()
+				.url("http://localhost:3002/deleteAllSongsFromDb/" + songId)
+				.put(new FormBody.Builder().build())
+				.build();
+		try (Response sentResp = this.client.newCall(toSend).execute()){
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		response.put("message", dbQueryStatus.getMessage());
 		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());

@@ -86,6 +86,16 @@ public class ProfileController {
 		response.put("path", String.format("PUT %s", Utils.getUrl(request)));
 
 		DbQueryStatus dbQueryStatus = profileDriver.getAllSongFriendsLike(userName);
+		
+//		Request toSend = new Request.Builder()
+//				.url("http://localhost:3001//" + songId + "?shouldDecrement=false")
+//				.put(new FormBody.Builder().build())
+//				.build();
+//		try (Response sentResp = this.client.newCall(toSend).execute()){
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 		response.put("message", dbQueryStatus.getMessage());
 		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
@@ -112,11 +122,21 @@ public class ProfileController {
 	@RequestMapping(value = "/likeSong/{userName}/{songId}", method = RequestMethod.PUT)
 	public @ResponseBody Map<String, Object> likeSong(@PathVariable("userName") String userName,
 			@PathVariable("songId") String songId, HttpServletRequest request) {
-
+		
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("path", String.format("PUT %s", Utils.getUrl(request)));
 
 		DbQueryStatus dbQueryStatus = playlistDriver.likeSong(userName, songId);
+
+		Request toSend = new Request.Builder()
+				.url("http://localhost:3001/updateSongFavouritesCount/" + songId + "?shouldDecrement=false")
+				.put(new FormBody.Builder().build())
+				.build();
+		try (Response sentResp = this.client.newCall(toSend).execute()){
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		response.put("message", dbQueryStatus.getMessage());
 		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
@@ -127,11 +147,21 @@ public class ProfileController {
 	@RequestMapping(value = "/unlikeSong/{userName}/{songId}", method = RequestMethod.PUT)
 	public @ResponseBody Map<String, Object> unlikeSong(@PathVariable("userName") String userName,
 			@PathVariable("songId") String songId, HttpServletRequest request) {
-
+		
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("path", String.format("PUT %s", Utils.getUrl(request)));
 
 		DbQueryStatus dbQueryStatus = playlistDriver.unlikeSong(userName, songId);
+
+		Request toSend = new Request.Builder()
+				.url("http://localhost:3001/updateSongFavouritesCount/" + songId + "?shouldDecrement=true")
+				.put(new FormBody.Builder().build())
+				.build();
+		try (Response sentResp = this.client.newCall(toSend).execute()){
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		response.put("message", dbQueryStatus.getMessage());
 		response = Utils.setResponseStatus(response, dbQueryStatus.getdbQueryExecResult(), dbQueryStatus.getData());
