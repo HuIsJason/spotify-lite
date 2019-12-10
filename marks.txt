@@ -59,3 +59,17 @@ OK
     "checking song DB to see if the favorite counter is incremented for songId 5d620f54d78b833e34e65b47": "Test Passed!"
 }
 totalGrade: 40.0/70.0
+
+---
+
+git usage: 1.0/2.0
+
+- commit messages are not capitalized
+- proper usage of changesets and git flow
+
+---
+
+code style: 2.0/4.0
+
+- appropriate usage of variable names in both microservices
+- no meaningful comments in either microservice
